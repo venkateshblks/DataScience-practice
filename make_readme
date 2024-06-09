@@ -1,0 +1,35 @@
+import nbformat
+
+# Load the notebook
+file_path = '/mnt/data/fl.ipynb'
+with open(file_path, 'r', encoding='utf-8') as file:
+    notebook = nbformat.read(file, as_version=4)
+
+# Extract information from the notebook
+cells = notebook.cells
+
+# Initialize sections
+title = ""
+description = ""
+installation = "## Installation\n\n```bash\npip install -r requirements.txt\n```\n"
+usage = "## Usage\n\n```bash\njupyter notebook flight_prediction.ipynb\n```\n"
+content = ""
+
+# Extracting content from cells
+for cell in cells:
+    if cell.cell_type == 'markdown':
+        content += cell.source + "\n\n"
+
+# Assuming the first markdown cell contains the title and description
+sections = content.split("\n\n", 1)
+if len(sections) > 1:
+    title_description, content = sections
+    title_description_lines = title_description.split('\n')
+    if title_description_lines:
+        title = "# " + title_description_lines[0] + "\n"
+        description = "\n".join(title_description_lines[1:]) + "\n"
+
+# Combine all parts into a README format
+readme_content = f"{title}\n{description}\n{installation}\n{usage}\n{content}"
+
+readme_content
